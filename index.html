@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Followex</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>    <style>
+      svg {
+        width: 100%;
+        height: 100%;
+        border: 1px solid #ccc;
+      }
+      .node circle {
+        fill: #69b3a2;
+      }
+      .link {
+        stroke: #999;
+        stroke-opacity: 0.6;
+      }
+      
+      /* アバター画像のスタイル */
+      .avatar {
+        border-radius: 50%;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      }
+      
+      /* SVG内の画像要素に対するクリッピング */
+      .node-group image {
+        clip-path: circle(50%);
+      }
+    </style>
+  </head>  <body>
+    <div style="padding: 10px; background-color: #f8f9fa; border-bottom: 1px solid #ddd;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <h2 style="margin: 0; color: #333;">GitHub Followex - Network Visualization</h2>
+          <p style="margin: 5px 0; color: #666;">
+            Mouse wheel: Zoom | Drag: Pan | Node drag: Move
+          </p>
+        </div>
+        <div style="display: flex; gap: 10px; align-items: center;">
+          <span style="color: #666; font-size: 14px;">📖 Documentation:</span>
+          <a href="README.md" style="color: #0366d6; text-decoration: none; font-weight: bold;">English</a>
+          <span style="color: #ccc;">|</span>
+          <a href="README_JP.md" style="color: #0366d6; text-decoration: none; font-weight: bold;">日本語</a>
+        </div>
+      </div>
+    </div>
+    <svg width="800" height="600"></svg>
+    <script src="graph.js"></script>
+  </body>
+</html>

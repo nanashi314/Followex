@@ -1,0 +1,198 @@
+# GitHub Followex 🕸️
+
+**GitHubのフォロワー・フォロー関係を美しく可視化するネットワーク分析ツール**
+
+![GitHub Followex Demo](https://img.shields.io/badge/D3.js-v7-orange) ![Node.js](https://img.shields.io/badge/Node.js-v18+-green) ![License](https://img.shields.io/badge/License-MIT-blue)
+
+## 特徴
+
+- **インタラクティブな可視化**: ズーム・パン・ドラッグ操作でネットワークを自由に探索
+- **GitHubアバター表示**: 各ユーザーのプロフィール画像を円形で表示
+
+## クイックスタート
+
+### 1. 環境準備
+
+```bash
+# Node.js (v18以上) がインストールされていることを確認
+node --version
+
+# 依存関係をインストール
+npm install
+```
+
+### 2. GitHub Personal Access Token の設定
+
+1. [GitHub Settings > Developer settings > Personal access tokens](https://github.com/settings/tokens) にアクセス
+2. "Generate new token (classic)" をクリック
+3. 以下のスコープを選択:
+   - `read:user` - ユーザー情報の読み取り
+   - `user:follow` - フォロー関係の読み取り
+4. トークンをコピーして `.env` ファイルを作成:
+
+```bash
+# .env ファイルを作成
+GITHUB_TOKEN=your_github_token_here
+```
+
+### 3. データ収集と可視化
+
+```bash
+# 1. GitHubデータを収集してグラフデータを生成
+node index.js
+
+# 2. ブラウザでindex.htmlを開いて可視化を確認
+# （ローカルサーバーまたは直接ファイルを開く）
+```
+
+## 📁 プロジェクト構造
+
+```
+Followex/
+├── index.js          # データ収集メインスクリプト
+├── graph.js           # D3.jsによる可視化ロジック
+├── index.html         # Webインターフェース
+├── package.json       # プロジェクト設定
+├── .env              # 環境変数（GitHubトークン）
+├── graph.json        # 生成されるグラフデータ
+└── README.md         # このファイル
+```
+
+## ⚙️ 設定とカスタマイズ
+
+### 起点ユーザーの変更
+
+`index.js` の以下の行を編集してください:
+
+```javascript
+// 起点となるユーザー名（必要に応じて変更してください）
+const rootUsername = "your_username_here";
+```
+
+### 探索深度の調整
+
+ネットワークサイズを制御するために探索深度を変更できます:
+
+```javascript
+// buildGraph関数内
+const MAX_DEPTH = 2; // 探索深度の上限（デフォルト: 2）
+```
+
+### 取得ユーザー数の制限
+
+パフォーマンスを考慮して、各ユーザーから取得するフォロワー/フォロー数を制限できます:
+
+```javascript
+// buildGraph関数内
+for (const follower of followers.slice(0, 10)) { // 上限: 10人
+```
+
+## 🎨 可視化の説明
+
+### ノードの表現
+- **サイズ**: フォロワー数に比例（中央値基準の2段階スケール）
+- **色**: フォロワー数に応じたグラデーション（Viridisカラースケール）
+- **画像**: GitHubプロフィールアバター（円形クリッピング）
+
+### エッジの表現
+- **方向**: フォロー関係を矢印で表現
+- **色**: グレー（透明度60%）
+
+### インタラクション
+- **ズーム**: マウスホイールで拡大縮小
+- **パン**: 背景をドラッグして移動
+- **ノード移動**: ノードをドラッグして位置調整
+- **ツールチップ**: ノードにホバーで詳細情報表示
+
+## 🔧 技術スタック
+
+- **バックエンド**: Node.js
+- **グラフライブラリ**: graphlib
+- **HTTP Client**: axios
+- **フロントエンド**: D3.js v7
+- **API**: GitHub REST API v3
+
+## 📊 パフォーマンス最適化
+
+### APIレート制限対策
+- **キャッシュシステム**: 同一データの重複取得を防止
+- **重複処理防止**: 処理済みユーザーのスキップ
+- **制限付き探索**: 深度とユーザー数の制限
+
+### 可視化の最適化
+- **物理シミュレーション**: 衝突検出と力学モデル
+- **レベル別表示**: ズームレベルに応じたラベル表示制御
+- **効率的レンダリング**: SVG要素の最適化
+
+## 🛠️ トラブルシューティング
+
+### よくある問題
+
+**1. 画像が表示されない**
+- GitHubアバターの読み込みに失敗した場合、デフォルトアイコンが表示されます
+- ネットワーク接続を確認してください
+
+**2. APIレート制限エラー**
+```
+Error: Request failed with status code 403
+```
+- GitHub Personal Access Tokenが正しく設定されているか確認
+- レート制限に達した場合は時間をおいて再実行
+
+**3. データが空の場合**
+```
+No nodes data found!
+```
+- 指定したユーザー名が存在するか確認
+- プライベートアカウントの場合は情報が取得できない可能性があります
+
+**4. メモリ不足**
+- 探索深度を下げてください（MAX_DEPTH = 1など）
+- 取得ユーザー数を制限してください
+
+## 📈 データ例
+
+生成される `graph.json` の構造:
+
+```json
+{
+  "nodes": [
+    {
+      "id": "username",
+      "followers_count": 1250,
+      "following_count": 180,
+      "public_repos": 45
+    }
+  ],
+  "links": [
+    {
+      "source": "follower_username",
+      "target": "followed_username"
+    }
+  ]
+}
+```
+
+## 🤝 コントリビューション
+
+1. このリポジトリをフォーク
+2. フィーチャーブランチを作成 (`git checkout -b feature/amazing-feature`)
+3. 変更をコミット (`git commit -m 'Add amazing feature'`)
+4. ブランチにプッシュ (`git push origin feature/amazing-feature`)
+5. プルリクエストを作成
+
+## 📝 ライセンス
+
+このプロジェクトはMITライセンスの下で公開されています。詳細は [LICENSE](LICENSE) ファイルを参照してください。
+
+## 🙏 謝辞
+
+- [D3.js](https://d3js.org/) - 素晴らしい可視化ライブラリ
+- [GitHub API](https://docs.github.com/en/rest) - 豊富なデータ提供
+- [graphlib](https://github.com/dagrejs/graphlib) - グラフデータ構造
+
+---
+
+**作成者**: [あなたの名前]  
+**バージョン**: 1.0.0  
+**最終更新**: 2025年6月
